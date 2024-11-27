@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">WISH_Android_ex2</string>
+    <string name="app_name">Decimal Period</string>
+    <string name="enter_numerator">Enter numerator</string>
+    <string name="enter_denominator">Enter denominator</string>
+    <string name="calculate">Calculate</string>
+    <string name="error_message">Invalid input. Please enter valid numbers.</string>
+    <string name="result">Decimal period: %s</string>
 </resources>
