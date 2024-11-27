@@ -1,4 +1,4 @@
-package com.example.WISH_Android_ex2
+package com.example.wish_android_ex2
 
 import android.os.Bundle
 import android.widget.Toast
@@ -7,21 +7,18 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.example.wish_android_ex2.R
-import com.example.wish_android_ex2.ui.theme.WISH_Android_ex2Theme
+import com.example.wish_android_ex2.ui.theme.DecimalPeriodTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            WISH_Android_ex2Theme {
+            DecimalPeriodTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     MainScreen()
                 }
@@ -32,9 +29,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen() {
-    var numerator by rememberSaveable { mutableStateOf(TextFieldValue()) }
-    var denominator by rememberSaveable { mutableStateOf(TextFieldValue()) }
-    var result by rememberSaveable { mutableStateOf("") }
+    var numerator by remember { mutableStateOf("") }
+    var denominator by remember { mutableStateOf("") }
+    var result by remember { mutableStateOf("") }
 
     val context = LocalContext.current
 
@@ -65,8 +62,8 @@ fun MainScreen() {
 
         Button(
             onClick = {
-                val num = numerator.text.toIntOrNull()
-                val den = denominator.text.toIntOrNull()
+                val num = numerator.toIntOrNull()
+                val den = denominator.toIntOrNull()
 
                 if (num != null && den != null && den != 0) {
                     result = findDecimalPeriod(num, den)
