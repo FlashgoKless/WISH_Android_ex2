@@ -7,18 +7,19 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.wish_android_ex2.ui.theme.DecimalPeriodTheme
+import com.example.wish_android_ex2.ui.theme.WISH_KotlinTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            DecimalPeriodTheme {
+            WISH_KotlinTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     MainScreen()
                 }
@@ -29,9 +30,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen() {
-    var numerator by remember { mutableStateOf("") }
-    var denominator by remember { mutableStateOf("") }
-    var result by remember { mutableStateOf("") }
+    var numerator by rememberSaveable { mutableStateOf("") }
+    var denominator by rememberSaveable { mutableStateOf("") }
+    var result by rememberSaveable { mutableStateOf("") }
 
     val context = LocalContext.current
 
@@ -86,25 +87,37 @@ fun MainScreen() {
 }
 
 fun findDecimalPeriod(numerator: Int, denominator: Int): String {
+    val isNegative = (numerator < 0) xor (denominator < 0)
+
+    val absNumerator = kotlin.math.abs(numerator)
+    val absDenominator = kotlin.math.abs(denominator)
+
     val remainders = mutableMapOf<Int, Int>()
-    var remainder = numerator % denominator
+    var remainder = absNumerator % absDenominator
     val decimals = StringBuilder()
     var position = 0
 
     while (remainder != 0 && !remainders.contains(remainder)) {
         remainders[remainder] = position
         remainder *= 10
-        decimals.append(remainder / denominator)
-        remainder %= denominator
+        decimals.append(remainder / absDenominator)
+        remainder %= absDenominator
         position++
     }
 
     return if (remainder == 0) {
         "0" // Дробь конечна
     } else {
-        val start = remainders[remainder] ?: 0
-        val nonRepeating = decimals.substring(0, start)
-        val repeating = decimals.substring(start)
-        "$nonRepeating($repeating)"
+        if (isNegative) {
+            val start = remainders[remainder] ?: 0
+            val nonRepeating = decimals.substring(0, start)
+            val repeating = decimals.substring(start)
+            "-$nonRepeating($repeating)"
+        } else {
+            val start = remainders[remainder] ?: 0
+            val nonRepeating = decimals.substring(0, start)
+            val repeating = decimals.substring(start)
+            "$nonRepeating($repeating)"
+        }
+        }
     }
-}
