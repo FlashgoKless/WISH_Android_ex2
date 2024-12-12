@@ -36,6 +36,7 @@ fun MainScreen() {
 
     val context = LocalContext.current
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,7 +68,8 @@ fun MainScreen() {
                 val den = denominator.toIntOrNull()
 
                 if (num != null && den != null && den != 0) {
-                    result = findDecimalPeriod(num, den)
+                    val calculator = DecimalPeriodCalculator()
+                    result = calculator.findDecimalPeriod(num, den)
                 } else {
                     Toast.makeText(context, context.getString(R.string.error_message), Toast.LENGTH_SHORT).show()
                 }
