@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.wish_android_ex2"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.wish_android_ex2"
