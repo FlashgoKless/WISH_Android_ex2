@@ -1,4 +1,4 @@
-package com.example.WISH_Android_ex2
+package com.example.wish_android_ex2
 
 import android.os.Bundle
 import android.widget.Toast
@@ -12,16 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.example.wish_android_ex2.R
-import com.example.wish_android_ex2.ui.theme.WISH_Android_ex2Theme
+import com.example.wish_android_ex2.ui.theme.WISH_KotlinTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            WISH_Android_ex2Theme {
+            WISH_KotlinTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     MainScreen()
                 }
@@ -32,8 +30,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen() {
-    var numerator by rememberSaveable { mutableStateOf(TextFieldValue()) }
-    var denominator by rememberSaveable { mutableStateOf(TextFieldValue()) }
+    var numerator by rememberSaveable { mutableStateOf("") }
+    var denominator by rememberSaveable { mutableStateOf("") }
     var result by rememberSaveable { mutableStateOf("") }
 
     val context = LocalContext.current
@@ -65,8 +63,8 @@ fun MainScreen() {
 
         Button(
             onClick = {
-                val num = numerator.text.toIntOrNull()
-                val den = denominator.text.toIntOrNull()
+                val num = numerator.toIntOrNull()
+                val den = denominator.toIntOrNull()
 
                 if (num != null && den != null && den != 0) {
                     result = findDecimalPeriod(num, den)
@@ -89,25 +87,37 @@ fun MainScreen() {
 }
 
 fun findDecimalPeriod(numerator: Int, denominator: Int): String {
+    val isNegative = (numerator < 0) xor (denominator < 0)
+
+    val absNumerator = kotlin.math.abs(numerator)
+    val absDenominator = kotlin.math.abs(denominator)
+
     val remainders = mutableMapOf<Int, Int>()
-    var remainder = numerator % denominator
+    var remainder = absNumerator % absDenominator
     val decimals = StringBuilder()
     var position = 0
 
     while (remainder != 0 && !remainders.contains(remainder)) {
         remainders[remainder] = position
         remainder *= 10
-        decimals.append(remainder / denominator)
-        remainder %= denominator
+        decimals.append(remainder / absDenominator)
+        remainder %= absDenominator
         position++
     }
 
     return if (remainder == 0) {
         "0" // Дробь конечна
     } else {
-        val start = remainders[remainder] ?: 0
-        val nonRepeating = decimals.substring(0, start)
-        val repeating = decimals.substring(start)
-        "$nonRepeating($repeating)"
+        if (isNegative) {
+            val start = remainders[remainder] ?: 0
+            val nonRepeating = decimals.substring(0, start)
+            val repeating = decimals.substring(start)
+            "-$nonRepeating($repeating)"
+        } else {
+            val start = remainders[remainder] ?: 0
+            val nonRepeating = decimals.substring(0, start)
+            val repeating = decimals.substring(start)
+            "$nonRepeating($repeating)"
+        }
     }
 }
