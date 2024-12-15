@@ -11,9 +11,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.wish_android_ex2.ui.theme.WISH_KotlinTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +35,9 @@ fun MainScreen() {
     var numerator by rememberSaveable { mutableStateOf("") }
     var denominator by rememberSaveable { mutableStateOf("") }
     var result by rememberSaveable { mutableStateOf("") }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val errorMessage = stringResource(id = R.string.error_message)
 
     val context = LocalContext.current
 
@@ -47,7 +52,7 @@ fun MainScreen() {
             value = numerator,
             onValueChange = { numerator = it },
             label = { Text(stringResource(id = R.string.enter_numerator)) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().testTag("numerator_field")
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -56,7 +61,7 @@ fun MainScreen() {
             value = denominator,
             onValueChange = { denominator = it },
             label = { Text(stringResource(id = R.string.enter_denominator)) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().testTag("denominator_field")
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -71,10 +76,10 @@ fun MainScreen() {
                     result = calculator.findDecimalPeriod(num, den)
 
                 } else {
-                    Toast.makeText(context, context.getString(R.string.error_message), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().testTag("calculate_button")
         ) {
             Text(stringResource(id = R.string.calculate))
         }
@@ -83,7 +88,8 @@ fun MainScreen() {
 
         Text(
             text = if (result.isNotEmpty()) stringResource(id = R.string.result, result) else "",
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.testTag("result_text")
         )
     }
 }
